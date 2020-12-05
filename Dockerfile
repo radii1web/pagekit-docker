@@ -21,7 +21,7 @@ VOLUME ["/pagekit/storage", "/pagekit/app/cache"]
 
 
 
-wget -q --auth-no-challenge --header='Accept:application/octet-stream' \
+RUN wget -q --auth-no-challenge --header='Accept:application/octet-stream' \
   https://$GITHUB_TOKEN:@api.github.com/repos/$REPO/releases/assets/`curl -H "Authorization: token $GITHUB_TOKEN" -H "Accept: application/vnd.github.v3.raw"  -s https://api.github.com/repos/$REPO/releases/download/$PAGEKIT_VERSION/pagekit-$PAGEKIT_VERSION.zip | jq ". | map(select(.tag_name == \"$VERSION\"))[0].assets | map(select(.name == \"$FILE\"))[0].id"` \
   -O /pagekit/$FILE && \
     unzip /pagekit/$FILE && rm /pagekit/$FILE
