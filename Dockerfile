@@ -12,19 +12,16 @@ RUN apt-get update && \
     unzip \
     wget \
     ca-certificates \
-    php5 php5-fpm php5-cli php5-json php5-mysql php5-curl
+    php5 php5-fpm php5-cli php5-json php5-mysql php5-curl 
 
-ENV PAGEKIT_VERSION 1.0.2
+ENV PAGEKIT_VERSION 1.18.3
 RUN mkdir /pagekit
 WORKDIR /pagekit
 VOLUME ["/pagekit/storage", "/pagekit/app/cache"]
 
 
-
-RUN wget -q --auth-no-challenge --header='Accept:application/octet-stream' \
-  https://$GITHUB_TOKEN:@api.github.com/repos/$REPO/releases/assets/`curl -H "Authorization: token $GITHUB_TOKEN" -H "Accept: application/vnd.github.v3.raw"  -s https://api.github.com/repos/$REPO/releases/download/$PAGEKIT_VERSION/pagekit-$PAGEKIT_VERSION.zip | jq ". | map(select(.tag_name == \"$VERSION\"))[0].assets | map(select(.name == \"$FILE\"))[0].id"` \
-  -O /pagekit/$FILE && \
-    unzip /pagekit/$FILE && rm /pagekit/$FILE
+RUN wget https://github.com/radii1web/pagekit/releases/download/$PAGEKIT_VERSION/pagekit-$PAGEKIT_VERSION.zip -O /pagekit/pagekit.zip && \
+    unzip /pagekit/pagekit.zip && rm /pagekit/pagekit.zip
 ADD nginx.conf /etc/nginx/nginx.conf
 
 RUN chown -R www-data: /pagekit && \
